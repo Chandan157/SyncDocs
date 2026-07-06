@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: syncdocs-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.18.0
+      - key: PORT
+        value: 1234
+      # ADD THESE SECRETS IN THE RENDER DASHBOARD:
+      # - key: DATABASE_URL
+      #   value: postgresql://...
+      # - key: JWT_SECRET
+      #   value: your-super-secret-key
+      # - key: FRONTEND_URL
+      #   value: https://your-vercel-frontend.vercel.app
