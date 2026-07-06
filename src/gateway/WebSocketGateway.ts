@@ -189,7 +189,6 @@ export class OTWebSocketGateway {
         documentId,
         revision: docState.revision,
         clientId: data.clientId,
-        userId: ws.userId,
         operationJSON: incomingOp
       });
     } catch (e) {
