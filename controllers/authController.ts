@@ -85,3 +85,19 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+export const getToken = (req: Request, res: Response) => {
+  let token = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.cookies && req.cookies.session) {
+    token = req.cookies.session;
+  }
+
+  if (token) {
+    res.json({ token });
+  } else {
+    res.status(401).json({ error: 'No token found' });
+  }
+};
