@@ -1,6 +1,5 @@
 require('dotenv').config({ path: '.env' });
 const postgres = require('postgres');
-
 async function fix() {
   const client = postgres(process.env.DATABASE_URL, { prepare: false });
   try {

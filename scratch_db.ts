@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { db } from './db/index';
-
 async function test() {
   const allShared = await db.query.documentMembers.findMany({
     with: {
