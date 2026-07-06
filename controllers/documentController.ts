@@ -240,3 +240,53 @@ export const shareDocument = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+export const updateDocument = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.sub;
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const { id } = req.params;
+    const { title } = req.body;
+
+    if (!title) {
+      res.status(400).json({ error: 'Title is required' });
+      return;
+    }
+
+    const doc = await db.query.documents.findFirst({
+      where: eq(documents.id, id),
+      with: {
+        members: {
+          where: (members, { eq }) => eq(members.userId, userId)
+        }
+      }
+    });
+
+    if (!doc) {
+      res.status(404).json({ error: 'Document not found' });
+      return;
+    }
+
+    const isOwner = doc.ownerId === userId;
+    const isEditor = doc.members && doc.members.some(m => m.role === 'editor');
+
+    if (!isOwner && !isEditor) {
+      res.status(403).json({ error: 'Forbidden: You do not have permission to edit this document' });
+      return;
+    }
+
+    const updatedDoc = await db.update(documents)
+      .set({ title, updatedAt: new Date() })
+      .where(eq(documents.id, id))
+      .returning();
+
+    res.json(updatedDoc[0]);
+  } catch (error) {
+    console.error('Error updating document:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
